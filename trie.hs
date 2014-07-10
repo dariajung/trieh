@@ -47,3 +47,10 @@ insert (x:xs) trie =
     case (Map.lookup x $ children trie) of
         Nothing -> trie { children = Map.insert x (insert xs newNode) newChildren }
         Just trie' -> trie { children = Map.insert x (insert xs trie') tc }
+
+search :: String -> Trie -> Maybe (String, Bool)
+search [] trie = value trie
+search (x:xs) trie = 
+    case (Map.lookup x $ children trie) of
+        Nothing -> Nothing
+        Just trie' -> search xs trie'
