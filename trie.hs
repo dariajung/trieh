@@ -2,6 +2,7 @@ module Trie where
 
 import qualified Data.Map as Map
 import Control.Monad
+import Data.Maybe
 
 {- 
     The Node data type.
@@ -16,7 +17,7 @@ import Control.Monad
 data Node a = Node {
     value :: Maybe a,
     children :: Map.Map Char (Node a)
-}
+} deriving (Show)
 
 type Trie = Node (String, Bool)
 
@@ -30,5 +31,19 @@ emptyTrie = Node {
     children = Map.empty
 }
 
+initTrie :: t -> Node (t, Bool)
+initTrie val = Node {
+    value = Just (val, False),
+    children = Map.empty
+}
+
 insert :: String -> Trie -> Trie
 insert [] trie = trie { value = updateEndWord $ value trie }
+insert (x:xs) trie = 
+    let tc = children trie
+        newNode = maybe (initTrie [x]) (initTrie . (++[x]) . fst) (value trie)
+        newChildren = Map.insert x newNode tc
+    in
+    case (Map.lookup x $ children trie) of
+        Nothing -> trie { children = Map.insert x (insert xs newNode) newChildren }
+        Just trie' -> trie { children = Map.insert x (insert xs trie') tc }
