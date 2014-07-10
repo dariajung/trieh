@@ -1,4 +1,4 @@
-haskell-trie
+trieh
 ============
 
 Trie/Prefix Tree written in Haskell
